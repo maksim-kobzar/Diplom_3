@@ -38,10 +38,10 @@ public class Transitions {
     }
     @Step("Клик по пункту меню")
     public void clickBtnChapter(String chapter){
-        driver.findElement(By.xpath("//span[text()=\"" + chapter + "\"]/.."));
+        driver.findElement(By.xpath("//span[text()=\"" + chapter + "\"]/..")).click();
     }
     @Step("Отображение пункта меню")
-    public boolean titleChapter(String chapter){
-        return driver.findElement(By.xpath("//h2[text()=\"" + chapter + "\"]")).isDisplayed();
+    public String titleChapter(String chapter){
+        return driver.findElement(By.xpath("//span[text()=\"" + chapter + "\"]/..")).getAttribute("class");
     }
 }

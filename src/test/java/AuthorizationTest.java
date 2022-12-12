@@ -1,7 +1,9 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.ValidatableResponse;
 import org.example.Authorization;
-import org.example.Generator;
+import org.example.Methods_Api.API_Method;
+import org.example.Methods_Api.UserGenerator;
 import org.example.Registration;
 import org.junit.After;
 import org.junit.Assert;
@@ -12,6 +14,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.time.Duration;
 
+import static org.apache.http.HttpStatus.SC_ACCEPTED;
 import static org.example.URL.*;
 
 @DisplayName("Проверки для авторизации")
@@ -20,12 +23,12 @@ public class AuthorizationTest {
     private String name;
     private String password;
     private String email;
-
-    public void setData(){
-        Generator generator = new Generator();
-        name = generator.name();
-        password = generator.password();
-        email = generator.email();
+    API_Method api_method = new API_Method();
+    UserGenerator userGenerator = new UserGenerator();
+    private void setData(){
+        email = userGenerator.getEmail();
+        password = userGenerator.getPassword();
+        name = userGenerator.getName();
     }
 
     public void login(){
@@ -64,7 +67,6 @@ public class AuthorizationTest {
         objAuthorization.clickBtnHomeLogin();
         objAuthorization.login(email, password);
         objAuthorization.clickBtnLogin();
-        System.out.println(objAuthorization.btnOrders());
         Assert.assertTrue("Ошибка при входе в аккаунт", objAuthorization.btnOrders());
     }
 
@@ -115,7 +117,14 @@ public class AuthorizationTest {
     }
 
     @After
-    public void tearDown() {
+    public void userDelete(){
         driver.quit();
+        ValidatableResponse responseToken = api_method.authorizationUser(UserGenerator.getAuthorization());
+        String token = responseToken.extract().path("accessToken");
+
+        if (token != null){
+            ValidatableResponse responseDelete = api_method.deleteUser(token);
+            responseDelete.assertThat().statusCode(SC_ACCEPTED);
+        }
     }
 }

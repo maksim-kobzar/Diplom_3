@@ -1,8 +1,10 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.ValidatableResponse;
 import org.example.Authorization;
-import org.example.Generator;
-import org.example.Registration;
+import org.example.Methods_Api.API_Method;
+import org.example.Methods_Api.User;
+import org.example.Methods_Api.UserGenerator;
 import org.example.Transitions;
 import org.junit.After;
 import org.junit.Assert;
@@ -10,30 +12,33 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.time.Duration;
 
-import static org.example.URL.*;
+import static org.apache.http.HttpStatus.SC_ACCEPTED;
+import static org.example.URL.URL_HOME;
+import static org.hamcrest.CoreMatchers.endsWith;
+
 @DisplayName("Проверки переходов по страницам")
 public class TransitionsTest {
     private WebDriver driver;
-    private String name;
     private String password;
     private String email;
+    private String token;
+    private User user;
 
-    public void setData(){
-        Generator generator = new Generator();
-        name = generator.name();
-        password = generator.password();
-        email = generator.email();
+    API_Method api_method = new API_Method();
+    UserGenerator userGenerator = new UserGenerator();
+
+    private void setData(){
+       user = userGenerator.getDefault();
+       email = userGenerator.getEmail();
+       password = userGenerator.getPassword();
     }
 
     public void register(){
-        driver.get(URL_REGISTER);
-        Registration objRegistration = new Registration(driver);
-        objRegistration.register(name, email, password);
-        objRegistration.clickBtnRegisters();
+        ValidatableResponse responseRegister = api_method.createCourier(user);
+        token = responseRegister.extract().path("accessToken");
     }
 
     public void login(){
@@ -53,7 +58,6 @@ public class TransitionsTest {
         driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(7));
-
     }
 
     @Test
@@ -92,14 +96,12 @@ public class TransitionsTest {
     }
 
     /**Раздел Конструктор*/
-
     @Test
     @DisplayName("Переход по Булки")
     public void transitionsChapterBulkiTest(){
         Transitions objTTransitions = new Transitions(driver);
         driver.get(URL_HOME);
-        objTTransitions.clickBtnChapter("Булки");
-        Assert.assertTrue("Ошибка при переходе со страницы - Личный кабинет на Конструктор", objTTransitions.titleChapter("Булки"));
+        Assert.assertThat("Ошибка при переходе со страницы - Личный кабинет на Конструктор", objTTransitions.titleChapter("Булки"), endsWith("noselect"));
     }
 
     @Test
@@ -108,7 +110,7 @@ public class TransitionsTest {
         Transitions objTTransitions = new Transitions(driver);
         driver.get(URL_HOME);
         objTTransitions.clickBtnChapter("Соусы");
-        Assert.assertTrue("Ошибка при переходе со страницы - Личный кабинет на Конструктор", objTTransitions.titleChapter("Соусы"));
+        Assert.assertThat("Ошибка при переходе со страницы - Личный кабинет на Конструктор", objTTransitions.titleChapter("Соусы"), endsWith("noselect"));
     }
 
     @Test
@@ -117,11 +119,15 @@ public class TransitionsTest {
         Transitions objTTransitions = new Transitions(driver);
         driver.get(URL_HOME);
         objTTransitions.clickBtnChapter("Начинки");
-        Assert.assertTrue("Ошибка при переходе со страницы - Личный кабинет на Конструктор", objTTransitions.titleChapter("Начинки"));
+        Assert.assertThat("Ошибка при переходе со страницы - Личный кабинет на Конструктор", objTTransitions.titleChapter("Начинки"), endsWith("noselect"));
     }
 
     @After
-    public void tearDown() {
+    public void userDelete(){
+        if (token != null){
+            ValidatableResponse responseDelete = api_method.deleteUser(token);
+            responseDelete.assertThat().statusCode(SC_ACCEPTED);
+        }
         driver.quit();
     }
 }
