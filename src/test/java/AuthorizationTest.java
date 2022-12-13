@@ -2,8 +2,8 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.example.Authorization;
-import org.example.Methods_Api.API_Method;
-import org.example.Methods_Api.UserGenerator;
+import org.example.MethodsApi.ApiMethod;
+import org.example.MethodsApi.UserGenerator;
 import org.example.Registration;
 import org.junit.After;
 import org.junit.Assert;
@@ -23,7 +23,7 @@ public class AuthorizationTest {
     private String name;
     private String password;
     private String email;
-    API_Method api_method = new API_Method();
+    ApiMethod apiMethod = new ApiMethod();
     UserGenerator userGenerator = new UserGenerator();
     private void setData(){
         email = userGenerator.getEmail();
@@ -119,11 +119,11 @@ public class AuthorizationTest {
     @After
     public void userDelete(){
         driver.quit();
-        ValidatableResponse responseToken = api_method.authorizationUser(UserGenerator.getAuthorization());
+        ValidatableResponse responseToken = apiMethod.authorizationUser(UserGenerator.getAuthorization());
         String token = responseToken.extract().path("accessToken");
 
         if (token != null){
-            ValidatableResponse responseDelete = api_method.deleteUser(token);
+            ValidatableResponse responseDelete = apiMethod.deleteUser(token);
             responseDelete.assertThat().statusCode(SC_ACCEPTED);
         }
     }

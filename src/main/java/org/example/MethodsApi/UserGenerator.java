@@ -1,4 +1,4 @@
-package org.example.Methods_Api;
+package org.example.MethodsApi;
 
 import org.apache.commons.lang3.RandomStringUtils;
 

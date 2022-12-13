@@ -2,9 +2,9 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.example.Authorization;
-import org.example.Methods_Api.API_Method;
-import org.example.Methods_Api.User;
-import org.example.Methods_Api.UserGenerator;
+import org.example.MethodsApi.ApiMethod;
+import org.example.MethodsApi.User;
+import org.example.MethodsApi.UserGenerator;
 import org.example.Transitions;
 import org.junit.After;
 import org.junit.Assert;
@@ -17,7 +17,6 @@ import java.time.Duration;
 
 import static org.apache.http.HttpStatus.SC_ACCEPTED;
 import static org.example.URL.URL_HOME;
-import static org.hamcrest.CoreMatchers.endsWith;
 
 @DisplayName("Проверки переходов по страницам")
 public class TransitionsTest {
@@ -27,7 +26,7 @@ public class TransitionsTest {
     private String token;
     private User user;
 
-    API_Method api_method = new API_Method();
+    ApiMethod api_method = new ApiMethod();
     UserGenerator userGenerator = new UserGenerator();
 
     private void setData(){
@@ -101,25 +100,24 @@ public class TransitionsTest {
     public void transitionsChapterBulkiTest(){
         Transitions objTTransitions = new Transitions(driver);
         driver.get(URL_HOME);
-        Assert.assertThat("Ошибка при переходе со страницы - Личный кабинет на Конструктор", objTTransitions.titleChapter("Булки"), endsWith("noselect"));
+        Assert.assertTrue("Ошибка при переходе со страницы - Личный кабинет на Конструктор", objTTransitions.titleChapter("Булки").contains("tab_tab_type_current__2BEPc"));
     }
 
     @Test
     @DisplayName("Переход по Соусы")
-    public void transitionsChapterSouseTest(){
+    public void transitionsChapterSouseTest() {
         Transitions objTTransitions = new Transitions(driver);
         driver.get(URL_HOME);
         objTTransitions.clickBtnChapter("Соусы");
-        Assert.assertThat("Ошибка при переходе со страницы - Личный кабинет на Конструктор", objTTransitions.titleChapter("Соусы"), endsWith("noselect"));
+        Assert.assertTrue("Ошибка при переходе со страницы - Личный кабинет на Конструктор", objTTransitions.titleChapter("Соусы").contains("tab_tab_type_current__2BEPc"));
     }
-
     @Test
     @DisplayName("Переход по Начинка")
     public void transitionsChapterFillingTest(){
         Transitions objTTransitions = new Transitions(driver);
         driver.get(URL_HOME);
         objTTransitions.clickBtnChapter("Начинки");
-        Assert.assertThat("Ошибка при переходе со страницы - Личный кабинет на Конструктор", objTTransitions.titleChapter("Начинки"), endsWith("noselect"));
+        Assert.assertTrue("Ошибка при переходе со страницы - Личный кабинет на Конструктор", objTTransitions.titleChapter("Начинки").contains("tab_tab_type_current__2BEPc"));
     }
 
     @After

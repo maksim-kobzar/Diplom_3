@@ -1,4 +1,4 @@
-package org.example.Methods_Api;
+package org.example.MethodsApi;
 
 import io.qameta.allure.Step;
 import io.restassured.builder.RequestSpecBuilder;
@@ -8,7 +8,7 @@ import io.restassured.specification.RequestSpecification;
 
 import static io.restassured.RestAssured.given;
 
-public class API_Method {
+public class ApiMethod {
     protected RequestSpecification getSpec(){
         return new RequestSpecBuilder()
                 .setContentType(ContentType.JSON)

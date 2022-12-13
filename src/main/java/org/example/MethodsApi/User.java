@@ -1,4 +1,4 @@
-package org.example.Methods_Api;
+package org.example.MethodsApi;
 
 public class User {
     private String email;
